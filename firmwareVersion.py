@@ -18,7 +18,7 @@ def openTemplate(workingDir, env = "Cpp"):
     return templateFile, versionFile
 
 def writeHash(templateFile, versionFile, workingDir):
-    # set working for proper git hash
+    # set working dir for proper git hash
     os.chdir(workingDir)
 
     # current date and time
@@ -27,15 +27,21 @@ def writeHash(templateFile, versionFile, workingDir):
 
     # get git hash and flag --dirty if there are uncomitted changes
     try:
-        ret = subprocess.run(["git", "describe", "--tags", "--long", "--always", "--dirty"], stdout=subprocess.PIPE, text=True)
-        build_version = ret.stdout.strip()
+        buildVersionSub = subprocess.run(["git", "describe", "--tags", "--long", "--always", "--dirty"], stdout=subprocess.PIPE, text=True)
+        buildVersion = buildVersionSub.stdout.strip()
+
+        gitURLSub = subprocess.run(["git", "config",  "--get", "remote.origin.url"], stdout=subprocess.PIPE, text=True)
+        gitURL = gitURLSub.stdout.strip()
+        print("URL")
+        print(gitURL)
     except:
-        build_version = "Untracked"
+        build_version = gitURL = "Untracked"
 
     # replace all variables in the template
     for line in templateFile:
         versionFile.write(line
-        .replace('#VERSION', build_version)
+        .replace('#GITURL', gitURL)
+        .replace('#VERSION', buildVersion)
         .replace('#DATE', strDate)
         .replace('#TIME', strTime)
         .replace('templateNamespace', 'version'))

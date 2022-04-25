@@ -12,6 +12,7 @@
 
 namespace templateNamespace
 {
+const char gitURL[] = "#GITURL";
 const char versionInfo[] = "#VERSION";
 const char BuildDate[] = "#DATE";
 const char BuildTime[] = "#TIME";
