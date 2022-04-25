@@ -15,7 +15,7 @@
 namespace templateNamespace
 {
     QString gitURL = "#GITURL";
-    QString versionInfo = "#VERSION";
+    QString gitHash = "#VERSION";
     QString BuildDate = "#DATE";
     QString BuildTime = "#TIME";
 };
