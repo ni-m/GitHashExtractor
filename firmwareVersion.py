@@ -12,15 +12,16 @@ import inspect
 
 def openTemplate(workingDir, env = "Cpp"):
     try:
-        templateFile = open(workingDir + "template/template" + env + ".h", "r")   # template, read only
-        versionFile = open(workingDir + "version.h", "w")          # target file, overwrite
+        templateFile = open(workingDir + "template/template" + env + ".h", "r")     # template, read only
+        versionFile = open(workingDir + "version.h", "w")                           # target file, overwrite
     except FileNotFoundError:
         templateFile = versionFile = False
 
     return templateFile, versionFile
 
 def writeHash(templateFile, versionFile, workingDir):
-    # set working dir for proper git hash
+    # set working dir to parent for proper git hash
+    # else it would extract the git hash of the submodule
     os.chdir(workingDir)
     os.chdir("..")
 
@@ -28,6 +29,7 @@ def writeHash(templateFile, versionFile, workingDir):
     strDate = str(date.today())
     strTime = datetime.now().strftime("%H:%M:%S")
 
+    print(os.path.isfile("./.git"))
     # get git hash and gitURL, set flag --dirty if there are untracked changes
     try:
         buildVersionSub = subprocess.run(["git", "describe", "--tags", "--long", "--always", "--dirty"], stdout=subprocess.PIPE, text=True)
