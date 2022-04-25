@@ -29,16 +29,16 @@ def writeHash(templateFile, versionFile, workingDir):
     strDate = str(date.today())
     strTime = datetime.now().strftime("%H:%M:%S")
 
-    print(os.path.isfile("./.git"))
-    # get git hash and gitURL, set flag --dirty if there are untracked changes
-    try:
+    if os.path.isdir("./.git"):
+        # get git hash and gitURL, set flag --dirty if there are untracked changes
         buildVersionSub = subprocess.run(["git", "describe", "--tags", "--long", "--always", "--dirty"], stdout=subprocess.PIPE, text=True)
         buildVersion = buildVersionSub.stdout.strip()
 
         gitURLSub = subprocess.run(["git", "config",  "--get", "remote.origin.url"], stdout=subprocess.PIPE, text=True)
         gitURL = gitURLSub.stdout.strip()
-    except:
-        build_version = gitURL = "Untracked"
+    else:
+        buildVersion = gitURL = "Untracked"
+        print("firmwareVersion.py: No valid git directory")
 
     # replace all variables in the template
     for line in templateFile:
