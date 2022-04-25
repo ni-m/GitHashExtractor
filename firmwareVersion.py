@@ -1,33 +1,53 @@
 # @file firmwareVersion.py
 # @author ni-m
 # @brief Writes current github commit and build date/time into version.h for tracking
+# Template can be chosen based on programming language
 
 import subprocess
 from datetime import date
 from datetime import datetime
+import os.path
 
-strToday = str(date.today())
-now = datetime.now()
+def openTemplate(workingDir, env = "Cpp"):
+    try:
+        templateFile = open(workingDir + "template/template" + env + ".h", "r")   # template, read only
+        versionFile = open(workingDir + "version.h", "w")          # target file, overwrite
+    except FileNotFoundError:
+        templateFile = versionFile = False
 
-ret = subprocess.run(["git", "describe", "--tags", "--long", "--always", "--dirty"], stdout=subprocess.PIPE, text=True) #Uses any tags
-build_version = ret.stdout.strip()
-print ("Firmware Revision: " + build_version)
-print("Today's date", strToday)
-print("Today's time", now.strftime("%H:%M:%S"))
+    return templateFile, versionFile
+        
 
-fin = open("./template/templateCpp.h", "r")   # template, read only
-fout = open("./version.h", "w")          # target file, overwrite
+def writeHash(templateFile, versionFile):
+    strToday = str(date.today())
+    now = datetime.now()
 
-# replace the following placeholders
-#VERSION
-#DATE
-#TIME
-# Template
-for line in fin:
-    fout.write(line.replace('#VERSION', build_version)
-    .replace('#DATE', strToday)
-    .replace('#TIME', now.strftime("%H:%M:%S"))
-    .replace('NAMESPACE_ID', 'version'))
-    
-fin.close()
-fout.close()
+    ret = subprocess.run(["git", "describe", "--tags", "--long", "--always", "--dirty"], stdout=subprocess.PIPE, text=True)
+    build_version = ret.stdout.strip()
+    for line in templateFile:
+        versionFile.write(line
+        .replace('#VERSION', build_version)
+        .replace('#DATE', strToday)
+        .replace('#TIME', now.strftime("%H:%M:%S"))
+        .replace('templateNamespace', 'version'))
+    templateFile.close()
+    versionFile.close()
+
+def checkFolder():
+    possibleDir = ["./", "../", "./GitHashExtractor"]
+    workingDir = False
+
+    for dir in possibleDir:
+        if os.path.exists(dir + "firmwareVersion.py"):
+            workingDir = dir
+            break
+    return workingDir
+
+if __name__ == "__main__":
+    workingDir = os.getcwd() + "/"
+    if workingDir:
+        templateFile, versionFile = openTemplate(workingDir)
+        writeHash(templateFile, versionFile)
+        print("Version.h updated")
+    else:
+        print("No template found")
