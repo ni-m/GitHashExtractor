@@ -16,38 +16,41 @@ def openTemplate(workingDir, env = "Cpp"):
         templateFile = versionFile = False
 
     return templateFile, versionFile
-        
 
-def writeHash(templateFile, versionFile):
-    strToday = str(date.today())
-    now = datetime.now()
+def writeHash(templateFile, versionFile, workingDir):
+    # set working for proper git hash
+    os.chdir(workingDir)
 
-    ret = subprocess.run(["git", "describe", "--tags", "--long", "--always", "--dirty"], stdout=subprocess.PIPE, text=True)
-    build_version = ret.stdout.strip()
+    # current date and time
+    strDate = str(date.today())
+    strTime = datetime.now().strftime("%H:%M:%S")
+
+    # get git hash and flag --dirty if there are uncomitted changes
+    try:
+        ret = subprocess.run(["git", "describe", "--tags", "--long", "--always", "--dirty"], stdout=subprocess.PIPE, text=True)
+        build_version = ret.stdout.strip()
+    except:
+        build_version = "Untracked"
+
+    # replace all variables in the template
     for line in templateFile:
         versionFile.write(line
         .replace('#VERSION', build_version)
-        .replace('#DATE', strToday)
-        .replace('#TIME', now.strftime("%H:%M:%S"))
+        .replace('#DATE', strDate)
+        .replace('#TIME', strTime)
         .replace('templateNamespace', 'version'))
+
+    # close all files:
     templateFile.close()
     versionFile.close()
 
-def checkFolder():
-    possibleDir = ["./", "../", "./GitHashExtractor"]
-    workingDir = False
-
-    for dir in possibleDir:
-        if os.path.exists(dir + "firmwareVersion.py"):
-            workingDir = dir
-            break
-    return workingDir
-
 if __name__ == "__main__":
-    workingDir = os.getcwd() + "/"
+    # get dir of this file -> prevent errors based on wrong working directory
+    workingDir = os.path.dirname(os.path.realpath(__file__)) + "/"
+    print("firmwareVersion.py: " + workingDir)
     if workingDir:
         templateFile, versionFile = openTemplate(workingDir)
-        writeHash(templateFile, versionFile)
-        print("Version.h updated")
+        writeHash(templateFile, versionFile, workingDir)
+        print("firmwareVersion.py: Successfully updated")
     else:
-        print("No template found")
+        print("firmwareVersion.py: No template found")
