@@ -7,6 +7,8 @@ import subprocess
 from datetime import date
 from datetime import datetime
 import os.path
+from pathlib import Path
+import inspect
 
 def openTemplate(workingDir, env = "Cpp"):
     try:
@@ -20,20 +22,19 @@ def openTemplate(workingDir, env = "Cpp"):
 def writeHash(templateFile, versionFile, workingDir):
     # set working dir for proper git hash
     os.chdir(workingDir)
+    os.chdir("..")
 
     # current date and time
     strDate = str(date.today())
     strTime = datetime.now().strftime("%H:%M:%S")
 
-    # get git hash and flag --dirty if there are uncomitted changes
+    # get git hash and gitURL, set flag --dirty if there are untracked changes
     try:
         buildVersionSub = subprocess.run(["git", "describe", "--tags", "--long", "--always", "--dirty"], stdout=subprocess.PIPE, text=True)
         buildVersion = buildVersionSub.stdout.strip()
 
         gitURLSub = subprocess.run(["git", "config",  "--get", "remote.origin.url"], stdout=subprocess.PIPE, text=True)
         gitURL = gitURLSub.stdout.strip()
-        print("URL")
-        print(gitURL)
     except:
         build_version = gitURL = "Untracked"
 
@@ -52,7 +53,8 @@ def writeHash(templateFile, versionFile, workingDir):
 
 if __name__ == "__main__":
     # get dir of this file -> prevent errors based on wrong working directory
-    workingDir = os.path.dirname(os.path.realpath(__file__)) + "/"
+    filename = inspect.getframeinfo(inspect.currentframe()).filename
+    workingDir     = os.path.dirname(os.path.abspath(filename)) + "/"
     print("firmwareVersion.py: " + workingDir)
     if workingDir:
         templateFile, versionFile = openTemplate(workingDir)
