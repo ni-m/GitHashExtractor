@@ -27,27 +27,32 @@ def openTemplate(workingDir, lang, ending):
     return templateFile, versionFile, error
 
 def writeHash(templateFile, versionFile, workingDir):
-    """Checks for valid git dir and writes git hash into version.h based on the template"""
+    """
+    Checks for valid git dir and writes git hash into version.h based on the template
+    """
     # set working dir to parent for proper git hash
-    # else it would extract the git hash of the submodule
+    # else it would extract the git hash of this submodule
     os.chdir(workingDir)
-    os.chdir("..")
+    os.chdir("../")
 
     # current date and time
     strDate = str(date.today())
     strTime = datetime.now().strftime("%H:%M:%S")
 
-    error = False
-    if os.path.isdir("./.git"):
-        # get git hash and gitURL, set flag --dirty if there are untracked changes
-        buildVersionSub = subprocess.run(["git", "describe", "--tags", "--long", "--always", "--dirty"], stdout=subprocess.PIPE, text=True)
-        buildVersion = buildVersionSub.stdout.strip()
+    # get git hash and gitURL, set flag --dirty if there are untracked changes
+    buildVersionSub = subprocess.run(["git", "describe", "--tags", "--long", "--always", "--dirty"], stdout=subprocess.PIPE, text=True)
+    buildVersion = buildVersionSub.stdout.strip()
 
-        gitURLSub = subprocess.run(["git", "config",  "--get", "remote.origin.url"], stdout=subprocess.PIPE, text=True)
-        gitURL = gitURLSub.stdout.strip()
-    else:
+    gitURLSub = subprocess.run(["git", "config",  "--get", "remote.origin.url"], stdout=subprocess.PIPE, text=True)
+    gitURL = gitURLSub.stdout.strip()
+
+    # check for empty string and set error flag in case it is not tracked under git
+    error = False
+    if buildVersion == '':
         buildVersion = gitURL = "Untracked"
         error = True
+
+    log(buildVersion)
 
     # replace all variables in the template
     for line in templateFile:
@@ -65,7 +70,10 @@ def writeHash(templateFile, versionFile, workingDir):
     return error
 
 def getLanguage(workingDir):
-    """Check for template files in ./template and compare the command line input for a valid template. Returns chosen env or default env"""
+    """
+    Check for template files in ./template and compare the command line input for a valid template.
+    Returns chosen env or default env (Cpp.h)
+    """
     lang = "Cpp"
     ending = ".h"
     if len(sys.argv) == 2:
@@ -81,21 +89,28 @@ def getLanguage(workingDir):
                 break
     return lang, ending
 
-if __name__ == "__main__":
+def main():
+    '''
+    Main code
+    '''
     # get dir of this file -> prevent errors based on wrong working directory
-    filename = inspect.getframeinfo(inspect.currentframe()).filename
-    workingDir = os.path.dirname(os.path.abspath(filename)) + "/"
+    try:
+        filename = inspect.getframeinfo(inspect.currentframe()).filename
+        workingDir = os.path.dirname(os.path.abspath(filename)) + "/"
+    except:
+        workingDir = "./"
+        log("Could not read working dir")
     lang, ending = getLanguage(workingDir)
     log(workingDir)
-    if workingDir:
-        templateFile, versionFile, errorFileOpen = openTemplate(workingDir, lang, ending)
-        if not errorFileOpen:
-            errorWriteHash = writeHash(templateFile, versionFile, workingDir)
-            if not errorWriteHash:
-                log("Successfully updated for " + lang)
-            else:
-                log("Invalid git directory")
+    templateFile, versionFile, errorFileOpen = openTemplate(workingDir, lang, ending)
+    if not errorFileOpen:
+        errorWriteHash = writeHash(templateFile, versionFile, workingDir)
+        if not errorWriteHash:
+            log("Successfully updated for " + lang)
         else:
-            log("Template not found")
+            log("Invalid git directory")
     else:
-        log("No template found")
+        log("Template not found")
+
+#Not inside __main__ == __name__ to support PlatformIO
+main()
