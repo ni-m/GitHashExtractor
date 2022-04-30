@@ -12,8 +12,8 @@
 
 namespace templateNamespace
 {
-const char gitURL[] = "#GITURL";
-const char gitHash[] = "#VERSION";
-const char BuildDate[] = "#DATE";
-const char BuildTime[] = "#TIME";
+	const char gitURL[] = "#GITURL";
+	const char gitHash[] = "#VERSION";
+	const char BuildDate[] = "#DATE";
+	const char BuildTime[] = "#TIME";
 };
