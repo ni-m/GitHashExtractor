@@ -10,10 +10,16 @@
  * 
  */
 
+#include <cstdint>
+
+//#MAJOR.#MINOR.#PATCH #PRERELEASE
 namespace templateNamespace
 {
-	const char gitURL[] = "#GITURL";
-	const char gitHash[] = "#VERSION";
-	const char BuildDate[] = "#DATE";
-	const char BuildTime[] = "#TIME";
+	constexpr char gitURL[] = "#GITURL";
+	constexpr char gitHash[] = "#VERSION";
+	constexpr char BuildDate[] = "#DATE";
+	constexpr char BuildTime[] = "#TIME";
+    constexpr char versionArray[] = {#MAJOR, #MINOR, #PATCH, #OFFSET}; //Major.Minor.Patch.Offset
+    constexpr uint32_t gitHashHex = #GITHASHHEX;
+    constexpr char dirtyFlag = #DIRTYFLAG;
 };

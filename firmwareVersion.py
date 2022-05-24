@@ -9,16 +9,21 @@ from datetime import datetime
 import os
 import inspect
 import sys
+import re
 
 def log(msg):
+    """ Write msg to console """
     print("firmwareVersion.py: " + msg)
 
 def openTemplate(workingDir, lang, ending):
-    """Opens template and version.h"""
+    """ Opens template and version.h """
     error = False
     try:
-        templateFile = open(workingDir + "template/template" + lang + ending, "r")     # template, read only
-        versionFile = open(workingDir + "version" + ending, "w")                           # target file, overwrite
+        # template, read only
+        templateFile = open(workingDir + "template/template" + lang + ending, "r")
+
+        # target file, overwrite
+        versionFile = open(workingDir + "version" + ending, "w")                    
     except:
         error = True
         templateFile = False
@@ -39,21 +44,48 @@ def writeHash(templateFile, versionFile, workingDir):
     strDate = str(date.today())
     strTime = datetime.now().strftime("%H:%M:%S")
 
-    # get git hash and gitURL, set flag --dirty if there are untracked changes
-    buildVersionSub = subprocess.run(["git", "describe", "--tags", "--long", "--always", "--dirty"], stdout=subprocess.PIPE, text=True)
-    buildVersion = buildVersionSub.stdout.strip()
+    # get only git hash and dirty flag
+    gitHashSub = subprocess.run(["git", "describe", "--always", "--dirty"], stdout=subprocess.PIPE, text=True)
+    gitHash = gitHashSub.stdout.strip()
 
+    # get gitURL
     gitURLSub = subprocess.run(["git", "config",  "--get", "remote.origin.url"], stdout=subprocess.PIPE, text=True)
     gitURL = gitURLSub.stdout.strip()
 
-    # check for empty string and set error flag in case it is not tracked under git
-    error = False
-    if buildVersion == '':
-        buildVersion = gitURL = "Untracked"
-        error = True
+    # get git hash , set flag --dirty if there are untracked changes
+    buildVersionSub = subprocess.run(["git", "describe", "--tags", "--long"], stdout=subprocess.PIPE, text=True)
+    buildVersion = buildVersionSub.stdout.strip()
+
+    major = minor = patch = offset = dirtyFlag = error = 0
+    preRelease = ''
+
+    # set dirtyFlag if there are two elements
+    gitHash = gitHash.split('-')
+    if(len(gitHash) == 2):
+        dirtyFlag = 1
+    gitHashHex = hex(int(gitHash[0], 16))
+
+    # extract correct tag and offset, else write gitHash
+    if buildVersion != '':
+        buildVersionArray = buildVersion.rsplit("-", 2)
+        gitTag = buildVersionArray[0].replace("v","")
+        offset = buildVersionArray[1]
+        
+        gitTagArray = re.split(r'[\-.]+', gitTag, 3)
+        gitTagArray = list(filter(None, gitTagArray))
+
+        try:
+            major = gitTagArray[0]
+            minor = gitTagArray[1]
+            patch = gitTagArray[2]
+            preRelease = gitTagArray[3]
+        except:
+            pass
+    else:
+        buildVersion = gitHash[0] + dirtyFlag * "-dirty"
+        error = 1
 
     log(buildVersion)
-
     # replace all variables in the template
     for line in templateFile:
         versionFile.write(line
@@ -61,12 +93,18 @@ def writeHash(templateFile, versionFile, workingDir):
         .replace('#VERSION', buildVersion)
         .replace('#DATE', strDate)
         .replace('#TIME', strTime)
-        .replace('templateNamespace', 'version'))
+        .replace('templateNamespace', 'version')
+        .replace('#MAJOR', str(major))
+        .replace('#MINOR', str(minor))
+        .replace('#PATCH', str(patch))
+        .replace('#PRERELEASE', str(preRelease))
+        .replace('#OFFSET', str(offset))
+        .replace('#GITHASHHEX', str(gitHashHex))
+        .replace('#DIRTYFLAG', str(dirtyFlag)))
 
     # close all files:
     templateFile.close()
     versionFile.close()
-
     return error
 
 def getLanguage(workingDir):
@@ -101,16 +139,17 @@ def main():
         workingDir = "./"
         log("Could not read working dir")
     lang, ending = getLanguage(workingDir)
-    log(workingDir)
     templateFile, versionFile, errorFileOpen = openTemplate(workingDir, lang, ending)
-    if not errorFileOpen:
-        errorWriteHash = writeHash(templateFile, versionFile, workingDir)
-        if not errorWriteHash:
-            log("Successfully updated for " + lang)
-        else:
-            log("Invalid git directory")
-    else:
+
+    if errorFileOpen:
         log("Template not found")
+        return
+    errorWriteHash = writeHash(templateFile, versionFile, workingDir)
+    if errorWriteHash:
+        log("No tag found")
+        return
+    log("Successfully updated for " + lang)
+    return
 
 #Not inside __main__ == __name__ to support PlatformIO
 main()
