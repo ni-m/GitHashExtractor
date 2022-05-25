@@ -11,31 +11,39 @@ v.2.3.4-beta
 ```
 
 ## Available expressions
-Expression | Usage | Example
--- | -- | --
-#GITURL | The url of this GitRepo | www.github.com/username/repo
-#VERSION | tag-offset-gitHash-dirtyFlag from git describe | v1.0.23-3-g354377c-dirty
-#DATE | Date of compilation | 2021-09-19
-#TIME | Time of compilation | 17:06:40
-#MAJOR | Major version | 1
-#MINOR | Minor version | 1
-#PATCH | Patch | 23
-#PRERELEASE | Prerelease | alpha / alpha.2 / alpha.beta
-#OFFSET | Amount of commits ahead this tag | 3
-#GITHASHHEX | GitHash(7) as HexValue | 0x354377c
-#DIRTYFLAG | 1 for uncommited changes, else 0 | 1
+Expression | Usage | Example | Flag to disable
+-- | -- | -- | --
+#GITURL | The url of this GitRepo | www.github.com/username/repo | GH_NOURL
+#VERSION | tag-offset-gitHash-dirtyFlag from git describe | v1.0.23-3-g354377c-dirty | GH_NOTEXT
+#DATE | Date of compilation | 2021-09-19 | GH_NOTEXT
+#TIME | Time of compilation | 17:06:40 | GH_NOTEXT
+#UNXITIME | Unixtimestamp of compilation | 1653459717 | GH_NORAW
+#MAJOR | Major version | 1 | GH_NORAW
+#MINOR | Minor version | 1 | GH_NORAW
+#PATCH | Patch | 23 | GH_NORAW
+#PRERELEASE | Prerelease | alpha / alpha.2 / alpha.beta | GH_NORAW
+#OFFSET | Amount of commits ahead this tag | 3 | GH_NORAW
+#GITHASHHEX | GitHash(n=7) as HexValue | 0x354377c | GH_NORAW
+#DIRTYFLAG | 1 for uncommited changes, else 0 | 1 | GH_NORAW
 
 ## Example [template](template/templateCpp.h) after build
 ```
 namespace version
 {
-	constexpr char gitURL[] = "www.github.com/username/repo";
-	constexpr char gitHash[] = "v1.0.23-3-g354377c-dirty";
-	constexpr char BuildDate[] = "2021-09-19";
-	constexpr char BuildTime[] = "17:06:40";
-    constexpr char versionArray[] = {1, 0, 23, 3}; //Major.Minor.Patch.Offset
+    #ifndef NOURL
+    constexpr char gitURL[] = "user/Repo";
+    #endif
+    #ifndef NOTEXT
+    constexpr char gitHash[] = "v1.1.23-3-g354377c-dirty";
+    constexpr char BuildDate[] = "2019-07-14";
+    constexpr char BuildTime[] = "12:21:07";
+    #endif
+    #ifndef NORAW
+    constexpr uint32_t buildTimeUnix = 1653475267;
+    constexpr char versionArray[] = {1, 1, 23, 3}; //Major.Minor.Patch.Offset
     constexpr uint32_t gitHashHex = 0x354377c;
     constexpr char dirtyFlag = 1;
+    #endif
 };
 ```
 
@@ -86,7 +94,7 @@ The following software versions were used to develop this software:
 ## Troubleshooting
 You may need to clone the submodule seperate after cloning your project.  
   
-Problem with GitIgnore: Add the following line to your .gitignore
+Problem with .gitignore: Add the following line to your .gitignore
 ```
 !GitHashExtractor
 ```
@@ -96,5 +104,5 @@ git submodule update --remote
 ```
 Init git submodule after submodule add
 ```
-git init
+git submodule update --init
 ```

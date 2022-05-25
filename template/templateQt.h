@@ -14,8 +14,18 @@
 
 namespace templateNamespace
 {
+    #ifndef GH_NOURL
     QString gitURL = "#GITURL";
+    #endif
+    #ifndef GH_NOTEXT
     QString gitHash = "#VERSION";
     QString BuildDate = "#DATE";
     QString BuildTime = "#TIME";
+    #endif
+    #ifndef GH_NORAW
+	uint32_t buildTimeUnix = #UNIXTIME;
+    char versionArray[] = {#MAJOR, #MINOR, #PATCH, #OFFSET}; //Major.Minor.Patch.Offset
+    uint32_t gitHashHex = #GITHASHHEX;
+    char dirtyFlag = #DIRTYFLAG;
+    #endif
 };

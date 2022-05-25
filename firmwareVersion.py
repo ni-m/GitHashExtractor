@@ -6,6 +6,8 @@
 import subprocess
 from datetime import date
 from datetime import datetime
+from datetime import time
+import time
 import os
 import inspect
 import sys
@@ -43,6 +45,7 @@ def writeHash(templateFile, versionFile, workingDir):
     # current date and time
     strDate = str(date.today())
     strTime = datetime.now().strftime("%H:%M:%S")
+    unixTimeStamp = int(time.time())
 
     # get only git hash and dirty flag
     gitHashSub = subprocess.run(["git", "describe", "--always", "--dirty"], stdout=subprocess.PIPE, text=True)
@@ -50,7 +53,7 @@ def writeHash(templateFile, versionFile, workingDir):
 
     # get gitURL
     gitURLSub = subprocess.run(["git", "config",  "--get", "remote.origin.url"], stdout=subprocess.PIPE, text=True)
-    gitURL = gitURLSub.stdout.strip()
+    gitURL = gitURLSub.stdout.strip().replace("https://github.com/", "").replace(".git","")
 
     # get git hash , set flag --dirty if there are untracked changes
     buildVersionSub = subprocess.run(["git", "describe", "--tags", "--long"], stdout=subprocess.PIPE, text=True)
@@ -82,8 +85,10 @@ def writeHash(templateFile, versionFile, workingDir):
         except:
             pass
     else:
-        buildVersion = gitHash[0] + dirtyFlag * "-dirty"
+        buildVersion = gitHash[0]
         error = 1
+
+    buildVersion = buildVersion + dirtyFlag * "-dirty"
 
     log(buildVersion)
     # replace all variables in the template
@@ -93,6 +98,7 @@ def writeHash(templateFile, versionFile, workingDir):
         .replace('#VERSION', buildVersion)
         .replace('#DATE', strDate)
         .replace('#TIME', strTime)
+        .replace('#UNIXTIME', str(unixTimeStamp))
         .replace('templateNamespace', 'version')
         .replace('#MAJOR', str(major))
         .replace('#MINOR', str(minor))
