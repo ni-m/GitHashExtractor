@@ -6,7 +6,6 @@
 import subprocess
 from datetime import date
 from datetime import datetime
-from datetime import time
 import time
 import os
 import inspect

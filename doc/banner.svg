@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="900mm"
+   height="200mm"
+   viewBox="0 0 900 200"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
+   sodipodi:docname="banner.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#ff0000"
+     borderopacity="1"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.24630192"
+     inkscape:cx="1707.2543"
+     inkscape:cy="428.33609"
+     inkscape:window-width="1920"
+     inkscape:window-height="986"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     width="200mm"
+     borderlayer="true"
+     inkscape:showpageshadow="false" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       id="rect7432"
+       width="900"
+       height="200"
+       x="0"
+       y="0"
+       style="fill:#5e5e5e;fill-opacity:1;stroke-width:0.223431" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:53.127px;line-height:1.25;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.32818"
+       x="25.729206"
+       y="70.346909"
+       id="text1093"><tspan
+         sodipodi:role="line"
+         id="tspan1091"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic Bold';fill:#ffffff;stroke-width:1.32818"
+         x="25.729206"
+         y="70.346909">GitHashExtractor</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:24.6944px;line-height:1.25;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.32818"
+       x="28.385826"
+       y="102.15793"
+       id="text1093-7"><tspan
+         sodipodi:role="line"
+         id="tspan1091-7"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:24.6944px;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic Bold';fill:#ffffff;stroke-width:1.32818"
+         x="28.385826"
+         y="102.15793">Save your version information for later...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:24.6944px;line-height:1.25;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.32818"
+       x="537.79919"
+       y="202.22891"
+       id="text1093-7-1"
+       transform="rotate(-12.838255)"><tspan
+         sodipodi:role="line"
+         id="tspan1091-7-8"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:24.6944px;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic Bold';fill:#ffffff;stroke-width:1.32818"
+         x="537.79919"
+         y="202.22891">0xcb455f4</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:24.6944px;line-height:1.25;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.32818"
+       x="668.67175"
+       y="-82.096542"
+       id="text1093-7-1-7"
+       transform="rotate(14.400925)"><tspan
+         sodipodi:role="line"
+         id="tspan1091-7-8-5"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:24.6944px;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic Bold';fill:#ffffff;stroke-width:1.32818"
+         x="668.67175"
+         y="-82.096542">v1.4.3-alpha</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:24.6944px;line-height:1.25;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.32818"
+       x="462.31216"
+       y="280.20444"
+       id="text1093-7-1-7-6"
+       transform="rotate(-14.193344)"
+       inkscape:transform-center-x="-53.171355"
+       inkscape:transform-center-y="-52.411765"><tspan
+         sodipodi:role="line"
+         id="tspan1091-7-8-5-0"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:24.6944px;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic Bold';fill:#ffffff;stroke-width:1.32818"
+         x="462.31216"
+         y="280.20444">v1.5.0-dirty</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:24.6944px;line-height:1.25;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.32818"
+       x="723.4317"
+       y="-190.34175"
+       id="text1093-7-1-0"
+       transform="rotate(18.111005)"><tspan
+         sodipodi:role="line"
+         id="tspan1091-7-8-6"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:24.6944px;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic Bold';fill:#ffffff;stroke-width:1.32818"
+         x="723.4317"
+         y="-190.34175">2016-05-24</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:24.6944px;line-height:1.25;font-family:sans-serif;fill:#000080;fill-opacity:1;stroke:none;stroke-width:1.32818"
+       x="624.48029"
+       y="184.12665"
+       id="text26802"><tspan
+         sodipodi:role="line"
+         id="tspan26800"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:24.6944px;font-family:'Century Gothic';-inkscape-font-specification:'Century Gothic Bold';fill:#000080;stroke-width:1.32818"
+         x="624.48029"
+         y="184.12665">ni-m/GitHashExtractor</tspan></text>
+  </g>
+</svg>
