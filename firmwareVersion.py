@@ -6,19 +6,25 @@
 import subprocess
 from datetime import date
 from datetime import datetime
+import time
 import os
 import inspect
 import sys
+import re
 
 def log(msg):
+    """ Write msg to console """
     print("firmwareVersion.py: " + msg)
 
 def openTemplate(workingDir, lang, ending):
-    """Opens template and version.h"""
+    """ Opens template and version.h """
     error = False
     try:
-        templateFile = open(workingDir + "template/template" + lang + ending, "r")     # template, read only
-        versionFile = open(workingDir + "version" + ending, "w")                           # target file, overwrite
+        # template, read only
+        templateFile = open(workingDir + "template/template" + lang + ending, "r")
+
+        # target file, overwrite
+        versionFile = open(workingDir + "version" + ending, "w")                    
     except:
         error = True
         templateFile = False
@@ -38,35 +44,72 @@ def writeHash(templateFile, versionFile, workingDir):
     # current date and time
     strDate = str(date.today())
     strTime = datetime.now().strftime("%H:%M:%S")
+    unixTimeStamp = int(time.time())
 
-    # get git hash and gitURL, set flag --dirty if there are untracked changes
-    buildVersionSub = subprocess.run(["git", "describe", "--tags", "--long", "--always", "--dirty"], stdout=subprocess.PIPE, text=True)
+    # get only git hash and dirty flag
+    gitHashSub = subprocess.run(["git", "describe", "--always", "--dirty"], stdout=subprocess.PIPE, text=True)
+    gitHash = gitHashSub.stdout.strip()
+
+    # get gitURL
+    gitURLSub = subprocess.run(["git", "config",  "--get", "remote.origin.url"], stdout=subprocess.PIPE, text=True)
+    gitURL = gitURLSub.stdout.strip().replace("https://github.com/", "").replace(".git","")
+
+    # get git hash , set flag --dirty if there are untracked changes
+    buildVersionSub = subprocess.run(["git", "describe", "--tags", "--long"], stdout=subprocess.PIPE, text=True)
     buildVersion = buildVersionSub.stdout.strip()
 
-    gitURLSub = subprocess.run(["git", "config",  "--get", "remote.origin.url"], stdout=subprocess.PIPE, text=True)
-    gitURL = gitURLSub.stdout.strip()
+    major = minor = patch = offset = dirtyFlag = error = 0
+    preRelease = ''
 
-    # check for empty string and set error flag in case it is not tracked under git
-    error = False
-    if buildVersion == '':
-        buildVersion = gitURL = "Untracked"
-        error = True
+    # set dirtyFlag if there are two elements
+    gitHash = gitHash.split('-')
+    if(len(gitHash) == 2):
+        dirtyFlag = 1
+    gitHashHex = hex(int(gitHash[0], 16))
+
+    # extract correct tag and offset, else write gitHash
+    if buildVersion != '':
+        buildVersionArray = buildVersion.rsplit("-", 2)
+        gitTag = buildVersionArray[0].replace("v","")
+        offset = buildVersionArray[1]
+        
+        gitTagArray = re.split(r'[\-.]+', gitTag, 3)
+        gitTagArray = list(filter(None, gitTagArray))
+
+        try:
+            major = gitTagArray[0]
+            minor = gitTagArray[1]
+            patch = gitTagArray[2]
+            preRelease = gitTagArray[3]
+        except:
+            pass
+    else:
+        buildVersion = gitHash[0]
+        error = 1
+
+    buildVersion = buildVersion + dirtyFlag * "-dirty"
 
     log(buildVersion)
-
     # replace all variables in the template
     for line in templateFile:
         versionFile.write(line
-        .replace('#GITURL', gitURL)
-        .replace('#VERSION', buildVersion)
-        .replace('#DATE', strDate)
-        .replace('#TIME', strTime)
-        .replace('templateNamespace', 'version'))
+        .replace('GH_GITURL', gitURL)
+        .replace('GH_VERSION', buildVersion)
+        .replace('GH_DATE', strDate)
+        .replace('GH_TIME', strTime)
+        .replace('GH_UNIXTIME', str(unixTimeStamp))
+        .replace('templateNamespace', 'version')
+        .replace('GH_MAJOR', str(major))
+        .replace('GH_MINOR', str(minor))
+        .replace('GH_PATCH', str(patch))
+        .replace('GH_PRERELEASE', str(preRelease))
+        .replace('GH_OFFSET', str(offset))
+        .replace('GH_GITHASHHEX', str(gitHashHex))
+        .replace('GH_DIRTYFLAG', str(dirtyFlag)))
 
     # close all files:
     templateFile.close()
     versionFile.close()
-
     return error
 
 def getLanguage(workingDir):
@@ -101,16 +144,17 @@ def main():
         workingDir = "./"
         log("Could not read working dir")
     lang, ending = getLanguage(workingDir)
-    log(workingDir)
     templateFile, versionFile, errorFileOpen = openTemplate(workingDir, lang, ending)
-    if not errorFileOpen:
-        errorWriteHash = writeHash(templateFile, versionFile, workingDir)
-        if not errorWriteHash:
-            log("Successfully updated for " + lang)
-        else:
-            log("Invalid git directory")
-    else:
+
+    if errorFileOpen:
         log("Template not found")
+        return
+    errorWriteHash = writeHash(templateFile, versionFile, workingDir)
+    if errorWriteHash:
+        log("No tag found")
+        return
+    log("Successfully updated for " + lang)
+    return
 
 #Not inside __main__ == __name__ to support PlatformIO
 main()

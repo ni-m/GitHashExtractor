@@ -1,5 +1,53 @@
 # GitHashExtractor
+
+![GitHashExtractor Banner image](./doc/banner.svg)
 Use this repo to extract the current git hash and date information on compile time. It supports various languages as stated in [utilization](#utilization)
+
+## Requirements
+Use one of the following schemas for your Git tags as described in [Semver2.0.0](https://semver.org/spec/v2.0.0.html)
+```
+1.2.2-alpha
+1.2.2-alpha.3
+1.2.2.alpha.beta
+v2.3.4-beta
+```
+
+## Available expressions
+Expression | Usage | Example | Flag to disable
+-- | -- | -- | --
+#GITURL | The url of this GitRepo | www.github.com/username/repo | GH_NO_URL
+#VERSION | tag-offset-gitHash-dirtyFlag from git describe | v1.0.23-3-g354377c-dirty | GH_NO_TEXT
+#DATE | Date of compilation | 2021-09-19 | GH_NO_TEXT
+#TIME | Time of compilation | 17:06:40 | GH_NO_TEXT
+#UNXITIME | Unixtimestamp of compilation | 1653459717 | GH_NO_RAW
+#MAJOR | Major version | 1 | GH_NO_RAW
+#MINOR | Minor version | 1 | GH_NO_RAW
+#PATCH | Patch | 23 | GH_NO_RAW
+#PRERELEASE | Prerelease | alpha / alpha.2 / alpha.beta | GH_NO_RAW
+#OFFSET | Amount of commits ahead this tag | 3 | GH_NO_RAW
+#GITHASHHEX | GitHash(n=7) as HexValue | 0x354377c | GH_NO_RAW
+#DIRTYFLAG | 1 for uncommited changes, else 0 | 1 | GH_NO_RAW
+
+## Example [template](template/templateCpp.h) after build
+```
+namespace version
+{
+    #ifndef GH_NO_URL
+    constexpr char gitURL[] = "user/Repo";
+    #endif
+    #ifndef GH_NO_TEXT
+    constexpr char gitHash[] = "v1.1.23-alpha-3-g354377c-dirty";
+    constexpr char BuildDate[] = "2019-07-14";
+    constexpr char BuildTime[] = "12:21:07";
+    #endif
+    #ifndef GH_NO_RAW
+    constexpr uint32_t buildTimeUnix = 1653475267;
+    constexpr char versionArray[] = {1, 1, 23, 3}; //Major.Minor.Patch.Offset
+    constexpr uint32_t gitHashHex = 0x354377c;
+    constexpr char dirtyFlag = 1;
+    #endif
+};
+```
 
 ## Installation
 Run the following command in your local git repo: [Troubleshooting](#troubleshooting)
@@ -23,11 +71,12 @@ set(PROJECT_SOURCES
         GitHashExtractor/version.h
 )
 ```
-Add the following lines to your CMakeLists.txt file 
+Add the following lines right after "set(PROJECT_SOURCES)" to your CMakeLists.txt file 
 ```
-# github.com/ni-m/gitHashExtractor
+# START github.com/ni-m/gitHashExtractor
 set(VERSION_FILE "./GitHashExtractor/version.h")
 set(VERSION_PYTHON "./GitHashExtractor/firmwareVersion.py")
+set_property(SOURCE ${VERSION_FILE} PROPERTY SKIP_AUTOGEN ON)
 add_custom_command(OUTPUT ${VERSION_FILE}
     COMMAND python ${VERSION_PYTHON} [ARGS] [Qt.h]
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -36,6 +85,7 @@ add_custom_command(OUTPUT ${VERSION_FILE}
 
 # target GitHashExtractor is always built
 add_custom_target(GitHashExtractor ALL DEPENDS ${VERSION_FILE})
+# END github.com/ni-m/gitHashExtractor
 ```
 
 ## Tool configuration
@@ -46,7 +96,7 @@ The following software versions were used to develop this software:
 ## Troubleshooting
 You may need to clone the submodule seperate after cloning your project.  
   
-Problem with GitIgnore: Add the following line to your .gitignore
+Problem with .gitignore: Add the following line to your .gitignore
 ```
 !GitHashExtractor
 ```
@@ -56,6 +106,5 @@ git submodule update --remote
 ```
 Init git submodule after submodule add
 ```
-git init
-git update
+git submodule update --init
 ```
