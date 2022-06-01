@@ -16,21 +16,21 @@
     #include <cstdint>
 #endif
 
-//tag: #MAJOR.#MINOR.#PATCH #PRERELEASE offset: #OFFSET
+//tag: GH_MAJOR.GH_MINOR.GH_PATCH GH_PRERELEASE offset: GH_OFFSET
 namespace templateNamespace
 {
     #ifndef GH_NO_URL
-	constexpr char gitURL[] = "#GITURL";
+	constexpr char gitURL[] = "GH_GITURL";
     #endif
     #ifndef GH_NO_TEXT
-	constexpr char gitHash[] = "#VERSION";
-	constexpr char BuildDate[] = "#DATE";
-	constexpr char BuildTime[] = "#TIME";
+	constexpr char gitHash[] = "GH_VERSION";
+	constexpr char BuildDate[] = "GH_DATE";
+	constexpr char BuildTime[] = "GH_TIME";
     #endif
     #ifndef GH_NO_RAW
-	constexpr uint32_t buildTimeUnix = #UNIXTIME;
-    constexpr char versionArray[] = {#MAJOR, #MINOR, #PATCH, #OFFSET}; //Major.Minor.Patch.Offset
-    constexpr uint32_t gitHashHex = #GITHASHHEX;
-    constexpr char dirtyFlag = #DIRTYFLAG;
+	constexpr uint32_t buildTimeUnix = GH_UNIXTIME;
+    constexpr char versionArray[] = {GH_MAJOR, GH_MINOR, GH_PATCH, GH_OFFSET}; //Major.Minor.Patch.Offset
+    constexpr uint32_t gitHashHex = GH_GITHASHHEX;
+    constexpr char dirtyFlag = GH_DIRTYFLAG;
     #endif
 }

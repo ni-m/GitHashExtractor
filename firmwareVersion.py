@@ -93,19 +93,19 @@ def writeHash(templateFile, versionFile, workingDir):
     # replace all variables in the template
     for line in templateFile:
         versionFile.write(line
-        .replace('#GITURL', gitURL)
-        .replace('#VERSION', buildVersion)
-        .replace('#DATE', strDate)
-        .replace('#TIME', strTime)
-        .replace('#UNIXTIME', str(unixTimeStamp))
+        .replace('GH_GITURL', gitURL)
+        .replace('GH_VERSION', buildVersion)
+        .replace('GH_DATE', strDate)
+        .replace('GH_TIME', strTime)
+        .replace('GH_UNIXTIME', str(unixTimeStamp))
         .replace('templateNamespace', 'version')
-        .replace('#MAJOR', str(major))
-        .replace('#MINOR', str(minor))
-        .replace('#PATCH', str(patch))
-        .replace('#PRERELEASE', str(preRelease))
-        .replace('#OFFSET', str(offset))
-        .replace('#GITHASHHEX', str(gitHashHex))
-        .replace('#DIRTYFLAG', str(dirtyFlag)))
+        .replace('GH_MAJOR', str(major))
+        .replace('GH_MINOR', str(minor))
+        .replace('GH_PATCH', str(patch))
+        .replace('GH_PRERELEASE', str(preRelease))
+        .replace('GH_OFFSET', str(offset))
+        .replace('GH_GITHASHHEX', str(gitHashHex))
+        .replace('GH_DIRTYFLAG', str(dirtyFlag)))
 
     # close all files:
     templateFile.close()
