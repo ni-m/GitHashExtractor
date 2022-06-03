@@ -20,14 +20,15 @@ namespace templateNamespace
     QString gitURL = "GH_GITURL";
     #endif
     #ifndef GH_NO_TEXT
-    QString gitHash = "GH_VERSION";
-    QString BuildDate = "GH_DATE";
-    QString BuildTime = "GH_TIME";
+    QString gitVersion = "GH_VERSION";
+    QString compileDate = "GH_DATE";
+    QString compileTime = "GH_TIME";
     #endif
     #ifndef GH_NO_RAW
-	uint32_t buildTimeUnix = GH_UNIXTIME;
-    char versionArray[] = {GH_MAJOR, GH_MINOR, GH_PATCH, GH_OFFSET}; //Major.Minor.Patch.Offset
-    uint32_t gitHashHex = GH_GITHASHHEX;
-    char dirtyFlag = GH_DIRTYFLAG;
+	constexpr uint32_t compileUnixTime = GH_UNIXTIME;
+    constexpr char tagArray[] = {GH_MAJOR, GH_MINOR, GH_PATCH, GH_OFFSET}; //Major.Minor.Patch.Offset
+    constexpr QString tagPreRelease = "GH_PRERELEASE";
+    constexpr uint32_t gitHash = GH_GITHASHHEX;
+    constexpr char gitDirty = GH_DIRTYFLAG;
     #endif
 }
