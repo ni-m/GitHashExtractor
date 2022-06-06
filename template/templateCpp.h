@@ -29,8 +29,9 @@ namespace templateNamespace
     #endif
     #ifndef GH_NO_RAW
 	constexpr uint32_t compileUnixTime = GH_UNIXTIME;
-    constexpr char tagArray[] = {GH_MAJOR, GH_MINOR, GH_PATCH, GH_OFFSET}; //Major.Minor.Patch.Offset
+    constexpr char tagArray[] = {GH_MAJOR, GH_MINOR, GH_PATCH}; //Major.Minor.Patch
     constexpr char tagPreRelease[] = "GH_PRERELEASE";
+    constexpr char tagOffset = GH_OFFSET;
     constexpr uint32_t gitHash = GH_GITHASHHEX;
     constexpr char gitDirty = GH_DIRTYFLAG;
     #endif

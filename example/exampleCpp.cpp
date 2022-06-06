@@ -29,7 +29,7 @@ int main(void)
     }  
     std::cout << std::endl;
 
-    std::cout << "Offset:     " << (int)version::tagArray[3] << std::endl;
+    std::cout << "Offset:     " << (int)version::tagOffset << std::endl;
     std::cout << "Prerelease: " << version::tagPreRelease << std::endl;
     std::cout << "Unixtime:   " << std::dec << version::compileUnixTime << std::endl;
     return 0;

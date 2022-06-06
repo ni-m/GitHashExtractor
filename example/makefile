@@ -9,10 +9,10 @@ exampleCppRun: exampleCpp
 	./$(EXE)
 
 exampleCpp: $(OBJS)
-	python3 ../firmwareVersion.py
 	$(LINK) $(LFLAGS) -o $(EXE) $(OBJS)
 
 exampleCpp.o:exampleCpp.cpp
+	python3 ../firmwareVersion.py
 	$(CC) $(CFLAGS) exampleCpp.cpp
 
 clean:
