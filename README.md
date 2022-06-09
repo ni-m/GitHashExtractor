@@ -4,7 +4,7 @@
 Use this repo to extract the current git hash and date information on compile time. It supports various languages as stated in [utilization](#utilization)
 
 ## Requirements
-Use one of the following schemas for your Git tags as described in [Semver2.0.0](https://semver.org/spec/v2.0.0.html)
+Use one of the following schemas for your Git tags as described in [Semver 2.0.0](https://semver.org/spec/v2.0.0.html)
 ```
 1.2.2-alpha
 1.2.2-alpha.3
@@ -31,20 +31,20 @@ gitDirty | 1 for uncommited changes, else 0 | 1 | GH_NO_RAW
 namespace version
 {
     #ifndef GH_NO_URL
-    constexpr char gitURL[] = "";
+        constexpr char gitURL[] = "username/gitrepo";
     #endif
     #ifndef GH_NO_TEXT
-    constexpr char gitVersion[] = "v1.1.1-0-gc184746-dirty";
-    constexpr char compileDate[] = "2022-06-03";
-    constexpr char compileTime[] = "12:28:27";
+        constexpr char gitVersion[] = "v1.1.1-0-gc184746-dirty";
+        constexpr char compDate[] = "2022-06-03";
+        constexpr char compTime[] = "12:28:27";
     #endif
     #ifndef GH_NO_RAW
-    constexpr uint32_t compileUnixTime = 1654252107;
-    constexpr char tagArray[] = {1, 1, 1, 0}; //Major.Minor.Patch
-    constexpr char tagPreRelease[] = "";
-    constexpr char tagOffset = 0;
-    constexpr uint32_t gitHash = 0xc184746;
-    constexpr char gitDirty = 1;
+        constexpr uint32_t compUnixTime = 1654252107;
+        constexpr char tagArray[] = {1, 1, 1, 0}; //Major.Minor.Patch
+        constexpr char tagPreRelease[] = "";
+        constexpr char tagOffset = 0;
+        constexpr uint32_t gitHash = 0xc184746;
+        constexpr char gitDirty = 1;
     #endif
 }
 ```

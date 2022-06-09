@@ -17,7 +17,7 @@
 int main(void)
 {
     std::cout << "=========== version info ===========" << std::endl;
-    std::cout << "Build date: " << version::compileDate << std::endl;
+    std::cout << "Build date: " << version::compDate << std::endl;
     std::cout << "GitHash:    0x" << std::hex << version::gitHash << std::dec << std::endl;
 
     std::cout << "GitTag:     ";
@@ -31,6 +31,6 @@ int main(void)
 
     std::cout << "Offset:     " << (int)version::tagOffset << std::endl;
     std::cout << "Prerelease: " << version::tagPreRelease << std::endl;
-    std::cout << "Unixtime:   " << std::dec << version::compileUnixTime << std::endl;
+    std::cout << "Unixtime:   " << std::dec << version::compUnixTime << std::endl;
     return 0;
 }
