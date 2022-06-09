@@ -1,7 +1,7 @@
 # GitHashExtractor
 
 ![GitHashExtractor Banner image](./doc/banner.svg)
-Use this repo to extract the current git hash and date information on compile time. It supports various languages as stated in [utilization](#utilization)
+Use this repo to extract the current git hash and date information on compile time. It supports various languages as stated in [utilization](#utilization). Head over to [example](/example/) for a quick look into the working principle.
 
 ## Requirements
 Use one of the following schemas for your Git tags as described in [Semver 2.0.0](https://semver.org/spec/v2.0.0.html)
