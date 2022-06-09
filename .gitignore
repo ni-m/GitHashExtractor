@@ -1,4 +1,11 @@
+# Ignore all files without a ending
+*
+!*.*
+!*/
+!makefile
+
 version.*
 .vscode
 test
 *.out
+*.o

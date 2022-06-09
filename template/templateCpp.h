@@ -20,17 +20,19 @@
 namespace templateNamespace
 {
     #ifndef GH_NO_URL
-	constexpr char gitURL[] = "GH_GITURL";
+        constexpr char gitURL[] = "GH_GITURL";
     #endif
     #ifndef GH_NO_TEXT
-	constexpr char gitHash[] = "GH_VERSION";
-	constexpr char BuildDate[] = "GH_DATE";
-	constexpr char BuildTime[] = "GH_TIME";
+        constexpr char gitVersion[] = "GH_VERSION";
+        constexpr char compDate[] = "GH_DATE";
+        constexpr char compTime[] = "GH_TIME";
     #endif
     #ifndef GH_NO_RAW
-	constexpr uint32_t buildTimeUnix = GH_UNIXTIME;
-    constexpr char versionArray[] = {GH_MAJOR, GH_MINOR, GH_PATCH, GH_OFFSET}; //Major.Minor.Patch.Offset
-    constexpr uint32_t gitHashHex = GH_GITHASHHEX;
-    constexpr char dirtyFlag = GH_DIRTYFLAG;
+        constexpr uint32_t compUnixTime = GH_UNIXTIME;
+        constexpr char tagArray[] = {GH_MAJOR, GH_MINOR, GH_PATCH}; //Major.Minor.Patch
+        constexpr char tagPreRelease[] = "GH_PRERELEASE";
+        constexpr char tagOffset = GH_OFFSET;
+        constexpr uint32_t gitHash = GH_GITHASHHEX;
+        constexpr char gitDirty = GH_DIRTYFLAG;
     #endif
 }
