@@ -4,9 +4,8 @@
 # into version.h for tracking
 # Template can be chosen based on programming language
 
+from datetime import date, datetime
 import subprocess
-from datetime import date
-from datetime import datetime
 import time
 import os
 import inspect
@@ -16,7 +15,7 @@ import re
 
 def log(msg):
     """ Write msg to console """
-    print("firmwareVersion.py: " + msg)
+    print("firmwareVersion.py: " + str(msg))
 
 
 def openTemplate(workingDir, lang, ending):
@@ -52,32 +51,36 @@ def writeHash(templateFile, versionFile, workingDir):
     strTime = datetime.now().strftime("%H:%M:%S")
     unixTimeStamp = int(time.time())
 
-    # get only git hash and dirty flag
+    # get git hash
     gitHashSub = subprocess.run(
-        ["git", "describe", "--always", "--dirty"],
-        stdout=subprocess.PIPE, text=True)
+        ["git", "rev-parse", "--short", "HEAD"],
+        stdout=subprocess.PIPE, text=True, check=True
+    )
     gitHash = gitHashSub.stdout.strip()
+
+    # Check for dirty working directory
+    dirtyCheck = subprocess.run(["git", "diff", "--quiet"])
+    dirtyFlag = dirtyCheck.returncode != 0
+    print(dirtyFlag)
 
     # get gitURL
     gitURLSub = subprocess.run(
-        ["git", "config",  "--get", "remote.origin.url"],
-        stdout=subprocess.PIPE, text=True)
+        ["git", "config", "--get", "remote.origin.url"],
+        stdout=subprocess.PIPE, text=True
+    )
     gitURL = gitURLSub.stdout.strip()
 
-    # get git hash , set flag --dirty if there are untracked changes
+    # get build version using describe
     buildVersionSub = subprocess.run(
         ["git", "describe", "--tags", "--long"],
-        stdout=subprocess.PIPE, text=True)
+        stdout=subprocess.PIPE, text=True
+    )
     buildVersion = buildVersionSub.stdout.strip()
 
-    major = minor = patch = offset = dirtyFlag = error = 0
+    major = minor = patch = offset = error = 0
     preRelease = ''
 
-    # set dirtyFlag if there are two elements
-    gitHash = gitHash.split('-')
-    if (len(gitHash) == 2):
-        dirtyFlag = 1
-    gitHashHex = hex(int(gitHash[0], 16))
+    gitHashHex = hex(int(gitHash, 16))
 
     # extract correct tag and offset, else write gitHash
     if buildVersion != '':
@@ -96,10 +99,11 @@ def writeHash(templateFile, versionFile, workingDir):
         except (TypeError, IndexError, ValueError):
             pass
     else:
-        buildVersion = gitHash[0]
+        buildVersion = gitHash
         error = 1
 
-    buildVersion = buildVersion + dirtyFlag * "-dirty"
+    if dirtyFlag:
+        buildVersion += "-dirty"
 
     log(buildVersion)
     # replace all variables in the template
@@ -117,7 +121,7 @@ def writeHash(templateFile, versionFile, workingDir):
                           .replace('GH_PRERELEASE', str(preRelease))
                           .replace('GH_OFFSET', str(offset))
                           .replace('GH_GITHASHHEX', str(gitHashHex))
-                          .replace('GH_DIRTYFLAG', str(dirtyFlag)))
+                          .replace('GH_DIRTYFLAG', str(int(dirtyFlag))))
 
     # close all files:
     templateFile.close()
