@@ -1,6 +1,7 @@
 # @file firmwareVersion.py
 # @author ni-m
-# @brief Writes current github commit and build date/time into version.h for tracking
+# @brief Writes current github commit and build date/time
+# into version.h for tracking
 # Template can be chosen based on programming language
 
 import subprocess
@@ -12,29 +13,34 @@ import inspect
 import sys
 import re
 
+
 def log(msg):
     """ Write msg to console """
     print("firmwareVersion.py: " + msg)
+
 
 def openTemplate(workingDir, lang, ending):
     """ Opens template and version.h """
     error = False
     try:
         # template, read only
-        templateFile = open(workingDir + "template/template" + lang + ending, "r")
+        templateFile = open(
+            workingDir + "template/template" + lang + ending, "r")
 
         # target file, overwrite
-        versionFile = open(workingDir + "version" + ending, "w")                    
-    except:
+        versionFile = open(workingDir + "version" + ending, "w")
+    except FileNotFoundError:
         error = True
         templateFile = False
         versionFile = False
 
     return templateFile, versionFile, error
 
+
 def writeHash(templateFile, versionFile, workingDir):
     """
-    Checks for valid git dir and writes git hash into version.h based on the template
+    Checks for valid git dir and writes git hash into version.h based
+    on the template
     """
     # set working dir to parent for proper git hash
     # else it would extract the git hash of this submodule
@@ -47,15 +53,21 @@ def writeHash(templateFile, versionFile, workingDir):
     unixTimeStamp = int(time.time())
 
     # get only git hash and dirty flag
-    gitHashSub = subprocess.run(["git", "describe", "--always", "--dirty"], stdout=subprocess.PIPE, text=True)
+    gitHashSub = subprocess.run(
+        ["git", "describe", "--always", "--dirty"],
+        stdout=subprocess.PIPE, text=True)
     gitHash = gitHashSub.stdout.strip()
 
     # get gitURL
-    gitURLSub = subprocess.run(["git", "config",  "--get", "remote.origin.url"], stdout=subprocess.PIPE, text=True)
-    gitURL = gitURLSub.stdout.strip().replace("https://github.com/", "").replace(".git","")
+    gitURLSub = subprocess.run(
+        ["git", "config",  "--get", "remote.origin.url"],
+        stdout=subprocess.PIPE, text=True)
+    gitURL = gitURLSub.stdout.strip()
 
     # get git hash , set flag --dirty if there are untracked changes
-    buildVersionSub = subprocess.run(["git", "describe", "--tags", "--long"], stdout=subprocess.PIPE, text=True)
+    buildVersionSub = subprocess.run(
+        ["git", "describe", "--tags", "--long"],
+        stdout=subprocess.PIPE, text=True)
     buildVersion = buildVersionSub.stdout.strip()
 
     major = minor = patch = offset = dirtyFlag = error = 0
@@ -63,25 +75,25 @@ def writeHash(templateFile, versionFile, workingDir):
 
     # set dirtyFlag if there are two elements
     gitHash = gitHash.split('-')
-    if(len(gitHash) == 2):
+    if (len(gitHash) == 2):
         dirtyFlag = 1
     gitHashHex = hex(int(gitHash[0], 16))
 
     # extract correct tag and offset, else write gitHash
     if buildVersion != '':
         buildVersionArray = buildVersion.rsplit("-", 2)
-        gitTag = buildVersionArray[0].replace("v","")
+        gitTag = buildVersionArray[0].replace("v", "")
         offset = buildVersionArray[1]
-        
+
         gitTagArray = re.split(r'[\-.]+', gitTag, 3)
         gitTagArray = list(filter(None, gitTagArray))
 
         try:
-            major = gitTagArray[0]
-            minor = gitTagArray[1]
-            patch = gitTagArray[2]
+            major = int(gitTagArray[0])
+            minor = int(gitTagArray[1])
+            patch = int(gitTagArray[2])
             preRelease = gitTagArray[3]
-        except:
+        except (TypeError, IndexError, ValueError):
             pass
     else:
         buildVersion = gitHash[0]
@@ -93,28 +105,30 @@ def writeHash(templateFile, versionFile, workingDir):
     # replace all variables in the template
     for line in templateFile:
         versionFile.write(line
-        .replace('GH_GITURL', gitURL)
-        .replace('GH_VERSION', buildVersion)
-        .replace('GH_DATE', strDate)
-        .replace('GH_TIME', strTime)
-        .replace('GH_UNIXTIME', str(unixTimeStamp))
-        .replace('templateNamespace', 'version')
-        .replace('GH_MAJOR', str(major))
-        .replace('GH_MINOR', str(minor))
-        .replace('GH_PATCH', str(patch))
-        .replace('GH_PRERELEASE', str(preRelease))
-        .replace('GH_OFFSET', str(offset))
-        .replace('GH_GITHASHHEX', str(gitHashHex))
-        .replace('GH_DIRTYFLAG', str(dirtyFlag)))
+                          .replace('GH_GITURL', gitURL)
+                          .replace('GH_VERSION', buildVersion)
+                          .replace('GH_DATE', strDate)
+                          .replace('GH_TIME', strTime)
+                          .replace('GH_UNIXTIME', str(unixTimeStamp))
+                          .replace('templateNamespace', 'version')
+                          .replace('GH_MAJOR', str(major))
+                          .replace('GH_MINOR', str(minor))
+                          .replace('GH_PATCH', str(patch))
+                          .replace('GH_PRERELEASE', str(preRelease))
+                          .replace('GH_OFFSET', str(offset))
+                          .replace('GH_GITHASHHEX', str(gitHashHex))
+                          .replace('GH_DIRTYFLAG', str(dirtyFlag)))
 
     # close all files:
     templateFile.close()
     versionFile.close()
     return error
 
+
 def getLanguage(workingDir):
     """
-    Check for template files in ./template and compare the command line input for a valid template.
+    Check for template files in ./template and compare the command line input
+    for a valid template.
     Returns chosen env or default env (Cpp.h)
     """
     lang = "Cpp"
@@ -130,7 +144,9 @@ def getLanguage(workingDir):
                 lang = langArray[0]
                 ending = '.' + langArray[1]
                 break
+    log("Generate " + lang)
     return lang, ending
+
 
 def main():
     '''
@@ -140,11 +156,12 @@ def main():
     try:
         filename = inspect.getframeinfo(inspect.currentframe()).filename
         workingDir = os.path.dirname(os.path.abspath(filename)) + "/"
-    except:
+    except (TypeError):
         workingDir = "./"
         log("Could not read working dir")
     lang, ending = getLanguage(workingDir)
-    templateFile, versionFile, errorFileOpen = openTemplate(workingDir, lang, ending)
+    templateFile, versionFile, errorFileOpen = openTemplate(
+        workingDir, lang, ending)
 
     if errorFileOpen:
         log("Template not found")
@@ -156,5 +173,6 @@ def main():
     log("Successfully updated for " + lang)
     return
 
-#Not inside __main__ == __name__ to support PlatformIO
+
+# Not inside __main__ == __name__ to support PlatformIO
 main()
