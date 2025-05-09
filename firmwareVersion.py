@@ -27,7 +27,7 @@ def openTemplate(workingDir, lang, ending):
             workingDir + "template/template" + lang + ending, "r")
 
         # target file, overwrite
-        versionFile = open(workingDir + "version" + ending, "w")
+        versionFile = open(workingDir + "git_version" + ending, "w")
     except FileNotFoundError:
         error = True
         templateFile = False

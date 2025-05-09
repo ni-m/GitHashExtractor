@@ -68,7 +68,7 @@ Git repo:
 │   ├───example
 │   ├───template
 │   ├───firmwareVersion.py
-│   └───version.h
+│   └───git_version.h
 └───Project files
 ```
 
@@ -95,7 +95,7 @@ Add files to PROJECT_SOURCE:
 set(PROJECT_SOURCES
         [... your files ...]
         GitHashExtractor/firmwareVersion.py
-        GitHashExtractor/version.h
+        GitHashExtractor/git_version.h
 )
 ```
 
@@ -103,7 +103,7 @@ Add the following lines right after "set(PROJECT_SOURCES)" to your CMakeLists.tx
 
 ```
 # START github.com/ni-m/gitHashExtractor
-set(VERSION_FILE "./GitHashExtractor/version.h")
+set(VERSION_FILE "./GitHashExtractor/git_version.h")
 set(VERSION_PYTHON "./GitHashExtractor/firmwareVersion.py")
 set_property(SOURCE ${VERSION_FILE} PROPERTY SKIP_AUTOGEN ON)
 add_custom_command(OUTPUT ${VERSION_FILE}
@@ -134,7 +134,7 @@ The following software versions were used to develop this software:
 
 ## Troubleshooting
 
-You may need to clone the submodule seperate after cloning your project.
+You may need to clone the submodule separate after cloning your project.
 
 Problem with .gitignore: Add the following line to your .gitignore
 
